@@ -1,8 +1,9 @@
-name: Build & push Docker images
+name: Build & push Docker image
 
 on:
   push:
     branches: [main]
+    tags: ["v*.*.*"]
   pull_request:
     branches: [main]
 
@@ -11,16 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-
-    strategy:
-      matrix:
-        include:
-          - service: backend
-            context: ./backend
-          - service: frontend
-            context: ./frontend
-          - service: app
-            context: .
 
     steps:
       - name: Checkout
@@ -40,17 +31,19 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/signer-${{ matrix.service }}
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/signer
           tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
             type=sha,prefix=
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
 
-      - name: Build and push ${{ matrix.service }}
+      - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ${{ matrix.context }}
+          context: .
           push: ${{ github.event_name == 'push' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha,scope=${{ matrix.service }}
-          cache-to: type=gha,scope=${{ matrix.service }},mode=max
+          cache-from: type=gha,scope=signer
+          cache-to: type=gha,scope=signer,mode=max

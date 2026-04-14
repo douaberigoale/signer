@@ -1,0 +1,25 @@
+# ── Docs ────────────────────────────────────────────────────────────────────
+docs/
+
+# ── Storage (runtime data) ──────────────────────────────────────────────────
+storage/signatures/
+storage/tmp/
+
+# ── Python ──────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+.pytest_cache/
+
+# ── JavaScript / Node ────────────────────────────────────────────────────────
+node_modules/
+dist/
+
+# ── Dot files / IDE folders ──────────────────────────────────────────────────
+# Ignore everything starting with a dot, but keep .github and .gitignore
+.*
+!.github
+!.gitignore
+!.env.example

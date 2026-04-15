@@ -9,15 +9,13 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pdfuser}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pdfuser} -d ${POSTGRES_DB:-pdfdb}"]
       interval: 5s
       timeout: 5s
       retries: 5
 
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: douaberigoale/signer:latest
     restart: unless-stopped
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-pdfuser}:${POSTGRES_PASSWORD:-pdfpassword}@db:5432/${POSTGRES_DB:-pdfdb}
